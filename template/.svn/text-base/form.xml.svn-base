@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class>
+	<body>
+		<![CDATA[
+			<?php
+			
+			include_once('../Class/#CLASS_NAME#.php');
+
+			$entry;
+			$action;
+			$msg;
+			$item = new #CLASS_NAME#();
+
+			InitPage();
+
+			function InitPage()
+			{
+				GetQueryString();
+				VerifyAction();
+				FillObjects();
+			}
+
+			function GetQueryString()
+			{
+				global $entry, $action;	
+				$entry = $_GET['id'];
+
+				$action = $_GET['action'];
+
+				if($action == '')
+				{
+					$action = $_POST['action'];
+				}
+			}
+
+			function VerifyAction()
+			{
+				global $action;	
+
+				if($action == 'save')
+				{
+					Save();
+				}
+			}
+
+			function FillObjects()
+			{
+				global $entry, $item;
+
+				if($entry != '')
+				{
+					$item->Load($entry);
+				}
+			}
+
+			function Save()
+			{
+				global $item, $msg;
+
+				$id = $_POST['hdnEntry'];
+
+				if($id != '0')
+				{
+					$item->#PRIMARY_CLASS_FIELD# = $id;
+				}
+
+#FIELDS_TO_SAVE#
+
+				try
+				{
+					$item->Save();
+					$msg = 'Registro salvo com sucesso.';
+
+				}
+				catch(Exception $err)
+				{
+					$msg = 'Ocorreu um problema ao salvar o registro. <br/>Tente novamente.' . $err;
+				}
+			}
+			
+
+		?>
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+			<title>Painel Andministrativo</title>
+			<?php include_once('controls/import.ctrl'); ?>
+			<script language="javascript">
+
+				$(document).ready(function(){
+					$('#frmRegister').validate();
+				});
+				
+
+			</script>
+		</head>
+		<body>
+			<?php include_once('controls/header.ctrl'); ?>
+
+			<div class="content">
+				<h1>
+				<?php if($entry != '') {echo('Editando Registro');}else{echo('Adicionar Registro');}?></h1>
+				<div class="form">
+					
+					<?php if($msg != ''){echo("<div class='alertBox success'><p>$msg</p></div>");}?>
+					
+					<form id="frmRegister" method="post" action="">
+						<input type="hidden" id="hdnAction" name="action" value="save">
+						<input type="hidden" id="hdnEntry" name="hdnEntry" value="<?php echo($item->#PRIMARY_CLASS_FIELD#); ?>" />
+								#FIELDS_CONTROLS#
+								<div class="campo_div campoSalvar_div">
+									<input class="campo_salvar" type="submit" name="btnSave" id="btnSave" value="Salvar" />
+								</div>
+								<div class="campo_div campoListar_div">
+									<a class="campo_listar" href="#CLASS_NAME#List.php" name="btnList" id="btnList" value="Listar">Lista</a>
+								</div>
+						</form>
+					<span class="clear"><span>&nbsp;</span></span>
+				</div>
+			</div>
+
+			<?php include_once('controls/footer.ctrl'); ?>
+
+		</body>
+		</html>
+		]]>
+	</body>
+	<control>
+		<![CDATA[
+		<div class="campo_div campo_text campo1_div">
+			<label for="txt#CONTROL_NAME_CAPITALIZED#">#CONTROL_NAME_CAPITALIZED#:</label>
+			<input type="text" name="txt#CONTROL_NAME_CAPITALIZED#" id="txt#CONTROL_NAME_CAPITALIZED#" class="required" value="<?php echo($item->#CONTROL_NAME#); ?>" />
+		</div>
+		]]>
+	</control>
+</class>

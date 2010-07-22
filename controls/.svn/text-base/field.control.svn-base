@@ -1,0 +1,15 @@
+<div id="ctnField_#ID_CONTROL#" class="field">
+	<input type="hidden" id="hdnSelectedType_#ID_CONTROL#" name="hdnSelectedType_#ID_CONTROL#" value="text" />
+	<input type="hidden" id="hdnPrimaryField_#ID_CONTROL#" name="hdnPrimaryField_#ID_CONTROL#" value="false" />
+	Column Name: <input type="text" id="txtColumnName_#ID_CONTROL#" onblur="javascript:CreateFieldClassName(this,'#txtPropertieName_#ID_CONTROL#');" name="txtColumnName_#ID_CONTROL#" /> | 
+	Propertie Name: <input type="text" id="txtPropertieName_#ID_CONTROL#" name="txtPropertieName_#ID_CONTROL#" /> | 
+	Type: <select id="cboType_#ID_CONTROL#" name="cboType_#ID_CONTROL#" onchange="javascript:ChangeType(this,#ID_CONTROL#);">
+		<option value="text">text</option>
+		<option value="number">number</option>
+		<option value="bool">bool</option>
+		<option value="datetime">datetime</option>
+		<option value="decimal">decimal</option>
+	</select>
+	Primary Field? <input type="checkbox" id="chkPrimaryField_#ID_CONTROL#" onchange="javascript:ChangePrimary(this,#ID_CONTROL# );"  />
+	<input type="button" onclick="javascript:RemoveField('#ctnField_#ID_CONTROL#');" id="btnRemove_#ID_CONTROL#" value="Remove" />
+</div>

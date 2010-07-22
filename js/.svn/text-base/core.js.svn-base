@@ -1,0 +1,101 @@
+
+String.prototype.capitalize = function(){
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+  };
+
+$(document).ready(function(){
+	
+	Init();
+	
+});
+
+function Init()
+{
+	Clear();
+}
+
+function Clear()
+{
+
+}
+
+function AddField()
+{
+	var currentIndex = parseInt($('#hdnCurrentIndex').val());
+	currentIndex = currentIndex+1;
+	$('#hdnCurrentIndex').val(currentIndex);
+	$.get('controls/field.control', function(data){
+		data = data.replace(/#ID_CONTROL#/g, currentIndex);
+		$('#fields').append(data);
+	});
+}
+
+function RemoveField(pContainer)
+{
+	$(pContainer).remove();
+}
+
+function SaveClass()
+{
+	$('#fields').submit();
+}
+
+function ChangeType(control, id)
+{
+	var hiddenControl = '#hdnSelectedType_' + id;
+	$(hiddenControl).val($(control).val());
+}
+
+function ChangePrimary(control, id)
+{
+	var hiddenControl = '#hdnPrimaryField_' + id;
+	$(hiddenControl).val(control.checked);
+}
+
+function CreateFieldClassName(fromControl, toControl)
+{
+	var value = $(fromControl).val();
+	
+	if(value != undefined && value != '')
+	{
+		var result = value.toLowerCase();
+		result = result.replace(/dt/g, 'data');
+		if(result != 'id')
+		{
+			result = result.replace(/id/g, '');
+		}
+		
+		result = result.replace(/_/g, ' ');
+		result = result.replace(/^\s+|\s+$/g, '');
+		result = result.replace(/ /g, '_');
+		
+		var actualValue = $(toControl).val();
+		if(actualValue == '')
+		{
+			$(toControl).val(result);
+		}
+	}
+	
+}
+
+function CreateClassName(fromControl, toControl)
+{
+	var value = $(fromControl).val();
+	
+	if(value != undefined && value != '')
+	{
+		var result = value.toLowerCase();
+		result = result.replace(/tb/g, '');
+		result = result.replace(/_/g, ' ');
+		result = result.replace(/^\s+|\s+$/g, '');
+		result = result.capitalize();
+		result = result.replace(/ /g, '');
+		var actualValue = $(toControl).val();
+		if(actualValue == '')
+		{
+			$(toControl).val(result);
+		}
+
+	}
+	
+}

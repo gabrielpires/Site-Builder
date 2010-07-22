@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class>
+	<body>
+		<![CDATA[
+		<?php
+			include_once('../Class/#CLASS_NAME#.php');
+		?>
+		
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+			<title>Painel Andministrativo</title>
+			<?php include_once('controls/import.ctrl'); ?>
+
+		</head>
+		<body>
+			<?php include_once('controls/header.ctrl'); ?>
+
+			<div class="content">
+				<h1>Lista de #CLASS_NAME#</h1>
+				<div class="list">
+					<form name="list_form" method="post">
+						<ul class="list_bts">
+							<li><a class="new_bt" href="#CLASS_NAME#Details.php" title="Cadastrar um novo item">Novo</a></li>
+						</ul>
+						<?php
+							$action  = $_GET['action'];
+							if($action == 'delete')
+							{
+								$deleted = false;
+								try
+								{
+									$id = $_GET['id'];
+									if($id > 0)
+									{
+										$item = new #CLASS_NAME#();
+										$item->#PRIMARY_CLASS_FIELD# = $id;
+										$item->Delete();
+										$deleted = true;	
+									}
+									else
+									{
+										$deleted = false;
+									}
+	
+								}
+								catch(Exception $err)
+								{
+									
+								}
+
+								
+								if($deleted)
+								{
+									echo('<div class="alertBox success"><p>Item excluido com sucesso.</p></div>');
+								}
+								else
+								{
+									echo('<div class="alertBox error"><p>Não foi possível excluir este item.</p></div>');
+								}
+							}
+
+						?>
+						<?php 
+							$list = #CLASS_NAME#::ListAll();
+							$count = count($list);
+							if($count > 0)
+							{
+								echo("<table>");
+								echo("<tr class='titles'>#HEADER_FIELDS#<td>Edit</td><td>Delete</td></tr>");
+								$counter = 0;
+								foreach ($list as $item)
+								{
+									$line = '';
+									if($counter == 0)
+									{
+										$line = 'even';
+										$counter = 1;
+									}
+									else
+									{
+										$line = 'odd';
+										$counter = 0;
+									}
+									
+									$link  = "javascript:DeleteItem('DepartamentList.php?id=$item->id&action=delete');";
+
+									echo("<tr class='$line'>");
+									echo("#LINE_FIELDS#");
+									echo('<td><a href="#CLASS_NAME#Details.php?id=' . $item->#PRIMARY_CLASS_FIELD# . '" class="edit_bt" id="btnEdit" name="btnEdit" title="Editar item ">Editar</a></td>');
+									echo('<td><a href="' . $link . '" class="del_bt" id="btnDelete" name="btnDelete" title="Excluir item ">Delete</a></td>');
+									echo("</tr>");
+
+								}
+								echo("</table>");
+							}
+							else
+							{
+								echo('<div class="alertBox alertBoxSucess"><p>Nenhum registro foi encontrado.</p></div>');
+							}
+						?>
+
+					</form>
+				</div>
+			</div>
+
+			<?php include_once('controls/footer.ctrl'); ?>
+
+		</body>
+		</html>
+
+		]]>
+	</body>
+
+</class>
