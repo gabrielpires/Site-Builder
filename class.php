@@ -218,7 +218,14 @@ try
 				$cloneControl = str_replace('#OBJECT_LABEL#',$field['object_value_label'],$cloneControl);
 				
 				$formFields .= $cloneControl . "\n\t\t\t";
-				$logicalFields .= '$item->' . "$lowerName" . '= $' . "_POST['txt$capitalizedName'];\n\t\t\t";
+				if($field['object_value'] != '')
+				{
+					$logicalFields .= '$item->' . "$lowerName" . '= $' . "_POST['ddl$capitalizedName'];\n\t\t\t";
+				}
+				else
+				{
+					$logicalFields .= '$item->' . "$lowerName" . '= $' . "_POST['txt$capitalizedName'];\n\t\t\t";
+				}
 			}
 		}
 
