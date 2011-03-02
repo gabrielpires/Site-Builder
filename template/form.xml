@@ -1,187 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class>
+<data>
 	<body>
-		<![CDATA[
-			<?php
-			
-			include_once('../Class/#CLASS_NAME#.php');
+<![CDATA[
+<?php 
+	session_start();
+	require_once('../../class/#CLASS_NAME#.php');
+	#EXTRA_INCLUDES#
+	
+	//CHANGE THIS TO A DEFINE VARIABLE IN: COMMON FOLDER UTILITIES FILE
+	$host = $_SERVER['HTTP_HOST'];
+	$uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+	
+	$result = isset($_SESSION['ADMIN_SERVICE_RESULT']) ? $_SESSION['ADMIN_SERVICE_RESULT'] : null;
+	//CLOSE BLOCK TO CHANGE
+	
+	$register_key = ((isset($_REQUEST['id']) ? (int)$_REQUEST['id'] : 0));
+	$url_get_content = 'http://' . $host . $uri . '/service.php?function=load&register='.$register_key;
+	$register = json_decode(file_get_contents($url_get_content));	
 
-			$entry = 0;
-			$action = '';
-			$msg = '';
-			$item = new #CLASS_NAME#();
+	
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Administravive Panel - Dashboard - Form</title>
 
-			InitPage();
+<?php include_once('../controls/assets.php'); ?>
+</head>
 
-			function InitPage()
-			{
-				GetQueryString();
-				VerifyAction();
-				FillObjects();
-			}
+<body>
+	<div id="wrapper">
 
-			function GetQueryString()
-			{
-				global $entry, $action;	
-				if(isset($_GET['id']))
-				{
-					$entry = $_GET['id'];
-				}
-				
-				if(isset($_GET['action']))
-				{
-					$action = $_GET['action'];
-				}
-				else if(isset($_POST['action']))
-				{
-					$action = $_POST['action'];
-				}
-			}
+		<?php include_once('../controls/header.php'); ?>
 
-			function VerifyAction()
-			{
-				global $action;	
+        <div id="containerHolder">
+			<div id="container">
 
-				if($action == 'save')
-				{
-					Save();
-				}
-			}
+				<?php include_once('../controls/sidebar.php'); ?>
 
-			function FillObjects()
-			{
-				global $entry, $item;
+             	<h2><a href="#">Dashboard</a> &raquo; <a href="list.php">#CLASS_NAME#</a>  &raquo; <a href="#" class="active"><?php echo  ($register_key <= 0)? 'Adding new register' : 'Editing register';?></a></h2>
+ 
+                <div id="main">
+  
+					<?php if($result != null) : ?>
+	                <p class="box-<?php echo $result['response']; ?>"><?php echo $result['result']; ?></p>		
+					<?php 
+						endif;
+						unset($_SESSION['ADMIN_SERVICE_RESULT']);
+					?>
+					<form id="frmRegister" action="service.php?function=save&source=form" method="post">
+						<input type="hidden" id="hdnRegisterId" name="hdnRegisterId" value="<?php echo $register->#PRIMARY_PROPERTY#; ?>" />
+                    	<fieldset>
+                    		#FIELDS#
+                            <input type="submit" value="Save" />
+                            <input type="button" value="Delete" onclick="DeleteItem(<?php echo $register->#PRIMARY_PROPERTY#; ?>, 'list');" />							<input type="button" value="List" onclick="MoveToList();"/>
+                        </fieldset>
+                    </form>
+                </div>
+   
+                
+                <div class="clear"></div>
+            </div>
 
-				if($entry != '')
-				{
-					$item->Load($entry);
-				}
-			}
+        </div>	
 
-			function Save()
-			{
-				global $item, $msg;
+	<?php include_once('../controls/footer.php'); ?>
+		
+    </div>
 
-				$id = $_POST['hdnEntry'];
+</body>
+</html>
 
-				if($id != '0')
-				{
-					$item->#PRIMARY_CLASS_FIELD# = $id;
-				}
-
-#FIELDS_TO_SAVE#
-
-				try
-				{
-					$item->Save();
-					$msg = 'Registro salvo com sucesso.';
-
-				}
-				catch(Exception $err)
-				{
-					$msg = 'Ocorreu um problema ao salvar o registro. <br/>Tente novamente.' . $err;
-				}
-			}
-			
-
-		?>
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-			<title>Painel Andministrativo</title>
-			<?php include_once('controls/import.ctrl'); ?>
-			<script language="javascript">
-
-				$(document).ready(function(){	
-					$('#frmRegister').validate();
-				});
-				
-
-			</script>
-		</head>
-		<body>
-			<?php include_once('controls/header.ctrl'); ?>
-
-			<div class="content">
-				<h1>
-				<?php if($entry != '') {echo('Editando Registro');}else{echo('Adicionar Registro');}?></h1>
-				<div class="form">
-					
-					<?php if($msg != ''){echo("<script language='javascript'>MsgBox('success','$msg');</script>");}?>
-					
-					<form id="frmRegister" method="post" action="">
-						<input type="hidden" id="hdnAction" name="action" value="save">
-						<input type="hidden" id="hdnEntry" name="hdnEntry" value="<?php echo($item->#PRIMARY_CLASS_FIELD#); ?>" />
-								#FIELDS_CONTROLS#
-								<div class="campo_div campoSalvar_div">
-									<input class="campo_salvar" type="submit" name="btnSave" id="btnSave" value="Salvar" />
-								</div>
-								<div class="campo_div campoListar_div">
-									<a class="campo_listar" href="#CLASS_NAME#List.php" name="btnList" id="btnList" value="Listar">Lista</a>
-								</div>
-						</form>
-					<span class="clear"><span>&nbsp;</span></span>
-				</div>
-			</div>
-
-			<?php include_once('controls/footer.ctrl'); ?>
-
-		</body>
-		</html>
-		]]>
+			]]>
 	</body>
 	<control id="text">
 		<![CDATA[
-		<div class="campo_div campo_text">
-			<label for="txt#CONTROL_NAME_CAPITALIZED#">#CONTROL_NAME_CAPITALIZED#:</label>
-			<input type="text" name="txt#CONTROL_NAME_CAPITALIZED#" id="txt#CONTROL_NAME_CAPITALIZED#" class="required" value="<?php echo($item->#CONTROL_NAME#); ?>" />
-		</div>
+			<p>
+				<label for="txt#PROPERTY_NAME#">#PROPERTY_NAME#:</label>
+				<input type="text" id="txt#PROPERTY_NAME#" name="field#PROPERTY_NAME#" class="text-long" value="<?php echo $register->#PROPERTY_NAME#;?>" />
+							</p>
 		]]>
 	</control>
 	<control id="checkbox">
 		<![CDATA[
-		<div class="campo_div campo_select">
-			<label for="chk#CONTROL_NAME_CAPITALIZED#">#CONTROL_NAME_CAPITALIZED#:</label>
-			<input type="checkbox" name="chk#CONTROL_NAME_CAPITALIZED#" id="chk#CONTROL_NAME_CAPITALIZED#" class="required" <?php if($item->#CONTROL_NAME# == 1 && $item->#CONTROL_NAME# == true){echo('checked="checked"');} ?> />
-		</div>
+				<p>
+				<label for="txt#PROPERTY_NAME#">#PROPERTY_NAME#:</label>
+				<input type="checkbox" id="chk#PROPERTY_NAME#" name="field#PROPERTY_NAME#" value="<?php echo $register->#PROPERTY_NAME#; ?>" <?php echo ($register->#PROPERTY_NAME# == 1) ? 'checked="checked"' : ''; ?> onchange="ChangeCheckBox(this);" />
+							</p>
 		]]>
 	</control>
 	<control id="select">
 		<![CDATA[
-		<div class="campo_div campo_select">
-			<label for="ddl#CONTROL_NAME_CAPITALIZED#">#CONTROL_NAME_CAPITALIZED#:</label>
-			<select name="ddl#CONTROL_NAME_CAPITALIZED#" id="ddl#CONTROL_NAME_CAPITALIZED#" class="required">
-			<?php 
-				
-				$list#CONTROL_NAME_CAPITALIZED# = #CLASS_NAME#::ListAll();
-				
-				if(count($list#CONTROL_NAME_CAPITALIZED#) > 0)
-				{
-					echo('<option value="0">Select an Item</option>');
-					foreach($list#CONTROL_NAME_CAPITALIZED# as $item#CONTROL_NAME_CAPITALIZED#)
-					{
-						if($item#CONTROL_NAME_CAPITALIZED#->#OBJECT_PRIMARY# == $item->#CONTROL_NAME#)
-						{
-							echo("<option value='$item#CONTROL_NAME_CAPITALIZED#->#OBJECT_PRIMARY#' selected='selected'>$item#CONTROL_NAME_CAPITALIZED#->#OBJECT_LABEL#</option>");
-						}
-						else
-						{
-							echo("<option value='$item#CONTROL_NAME_CAPITALIZED#->#OBJECT_PRIMARY#'>$item#CONTROL_NAME_CAPITALIZED#->#OBJECT_LABEL#</option>");
-						}
-						
-					}
-				}
-				else
-				{
-					echo('<option value="0">Empty List</option>');
-				}
-			?>
-			</select>
-		</div>
+				<p>
+					<label for="ddl#PROPERTY_NAME#">#PROPERTY_NAME#:</label>
+					<select id="ddl#PROPERTY_NAME#" name="field#PROPERTY_NAME#">
+						<option value="0">Select an item</option>
+						<?php
+							$list#OTHER_CLASS_NAME# = #OTHER_CLASS_NAME#::ListAll();
+							foreach($list#OTHER_CLASS_NAME# as $item)
+							{
+						?>
+							<option value="<?php echo $item->#OTHER_CLASS_VALUE_PROPERTY# ?>" <?php echo ($register->#PROPERTY_NAME# == $item->#OTHER_CLASS_VALUE_PROPERTY#) ? 'selected="selected"' : '' ?> ><?php echo $item->#OTHER_CLASS_TEXT_PROPERTY# ?></option>
+						<?php
+							}
+						?>
+					</select>
+				</p>
 		]]>
 	</control>
-</class>
+</data>

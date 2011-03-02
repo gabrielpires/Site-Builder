@@ -1,0 +1,11 @@
+	<div id="ctnTable_#TABLE_INDEX#">
+		<input type="hidden" id="hdnTable_#TABLE_INDEX#" name="hdnTable_#TABLE_INDEX#" value="#TABLE_NAME#" />
+		<input type="hidden" id="hdnTotalColumns_#TABLE_INDEX#" name="hdnTotalColumns_#TABLE_INDEX#" value="#TOTAL_COLUMNS#" />
+		<label>
+			<input type="checkbox" id="chkTableSelect_#TABLE_INDEX#" name="chkTableSelect_#TABLE_INDEX#" onchange="ChangeSelected(this);" value="1" checked="checked" />
+			Table: #TABLE_NAME# - Class: <input type="text" id="txtClassName_#TABLE_INDEX#" name="txtClassName_#TABLE_INDEX#" value="#CLASS_NAME#" />
+		</label>
+		<ul id="listColumns_#TABLE_INDEX#">
+			#COLUMNS#
+		</ul>
+	</div>

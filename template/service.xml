@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+	<body>
+		<![CDATA[
+<?php 
+session_start();
+
+require_once('../../class/#CLASS_NAME#.php');
+
+$service = new Service#CLASS_NAME#();
+
+class Service#CLASS_NAME#
+{
+	public $function = '';
+	public $source = '';
+	
+	public $host_site;
+	public $uri;
+	
+	public $key;
+	
+	public function Service#CLASS_NAME#()
+	{
+		$this->ValidateRequest();
+		$this->RequestQueryString();
+		$this->RequestUrl();
+		$this->ProcessFunction();
+	}
+	
+	public function ValidateRequest()
+	{
+		//APPLY HERE THE REFFER RULE;
+	}
+	
+	public function RequestQueryString()
+	{
+		$this->function = strtolower((isset($_GET['function']) ? $_GET['function'] : 'no-function'));
+		$this->source = (isset($_GET['source']) ? $_GET['source'] : 'list');	
+	}
+	
+	public function RequestUrl()
+	{
+		$this->host  = $_SERVER['HTTP_HOST'];
+		$this->uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+	}
+	
+	public function ProcessFunction()
+	{
+		switch($this->function)
+		{
+			case "load":
+				$this->Load();
+				break;
+			case "save":
+				$this->Save();
+				break;
+			case "delete":
+				$this->Delete();
+				break;
+			case "no-function":
+				break;
+		}
+	}
+	
+	public function Load()
+	{
+		$key = (isset($_REQUEST['register']) ? $_REQUEST['register'] : 0);
+		$register = new #CLASS_NAME#();
+		$register->Load($key);
+		
+		echo json_encode($register);
+	}
+	
+	public function Save()
+	{
+		$exception = null;
+		$result = false;
+		
+		try
+		{
+			$register = new #CLASS_NAME#();
+			$this->key = (isset($_REQUEST['hdnRegisterId'])) ? $_REQUEST['hdnRegisterId'] : $register->#PRIMARY_PROPERTY#;
+
+			$register->Load($this->key);
+			
+
+			#REQUEST_FIELDS#
+			
+			#SET_FIELDS#
+			
+			$result = $register->Save();
+		}
+		catch(Exception $err)
+		{
+			$exception = $err;
+		}
+
+
+		$this->CallBack($result,$exception,"?id=$register->#PRIMARY_PROPERTY#");
+	}
+	
+	public function Delete()
+	{
+
+		$exception = null;
+		$result = false;
+		
+		try
+		{
+			$this->key = (isset($_GET['register']) ? $_GET['register'] : 0);
+			$register = new #CLASS_NAME#();
+			$register->id = $this->key;
+			$result = $register->Delete();
+		}
+		catch(Exception $err)
+		{
+			$exception = $err;
+		}
+		
+		$this->CallBack($result,$exception);		
+	}
+	
+	public function CallBack($response,$exception,$append = '')
+	{
+		$result = array('action'=> $this->function,  
+				'response'=> (($response) ? 'success': 'error'),
+				'result'=> (($response) ? 'Your register has been: ' . $this->function : 'An error occour when you try: ' . $this->function),
+				'register'=> $register->id,
+				'error'=> $response,
+				'exception'=>$exception
+				);
+				
+		
+		
+		if(!empty($this->function))
+		{
+			$_SESSION['ADMIN_SERVICE_RESULT'] = $result;
+			$url_to_redirect = $this->CreateCallBackUrl($append);
+			header("Location: $url_to_redirect");
+		}
+		else
+		{
+			echo json_encode($result);
+		}
+				
+		return $result;
+	}
+	
+	public function CreateCallBackUrl($query_string_append = "")
+	{
+		$url_callback = 'http://' . $this->host . $this->uri . '/' . $this->source . '.php' . $query_string_append;
+		return $url_callback;
+	}
+}	
+	
+	
+?>
+		]]>
+	</body>
+	<item id="request-item">
+		<![CDATA[
+			$#PROPERTY_NAME# = (isset($_REQUEST['field#PROPERTY_NAME#'])) ? $_REQUEST['field#PROPERTY_NAME#'] : $register->#PROPERTY_NAME# ;
+		]]>
+	</item>
+	<item id="set-item">
+		<![CDATA[
+			$register->#PROPERTY_NAME# = $#PROPERTY_NAME#;
+		]]>
+	</item>
+</data>

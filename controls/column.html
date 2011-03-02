@@ -1,0 +1,27 @@
+			<li>
+				<input type="hidden" id="hdnFieldName_#TABLE_INDEX#_#COLUMN_INDEX#" name="hdnFieldName_#TABLE_INDEX#_#COLUMN_INDEX#" value="#COLUMN_NAME#" />
+				<input type="hidden" id="hdnFieldType_#TABLE_INDEX#_#COLUMN_INDEX#" name="hdnFieldType_#TABLE_INDEX#_#COLUMN_INDEX#" value="#COLUMN_TYPE#" />
+				<input type="hidden" id="hdnFieldKey_#TABLE_INDEX#_#COLUMN_INDEX#" name="hdnFieldKey_#TABLE_INDEX#_#COLUMN_INDEX#" value="#COLUMN_KEY#" />
+				
+				Field: <em>#COLUMN_NAME#</em> - Type: <em>#COLUMN_TYPE#</em> - Key: <em>#COLUMN_KEY#</em>
+				<p>
+					Class Property: 
+					<input type="text" id="txtPropertyName_#TABLE_INDEX#_#COLUMN_INDEX#" name="txtPropertyName_#TABLE_INDEX#_#COLUMN_INDEX#" value="#PROPERTY_NAME#" /> | Is Object ? 
+					<input type="checkbox" id="chkIsObject_#TABLE_INDEX#_#COLUMN_INDEX#" name="chkIsObject_#TABLE_INDEX#_#COLUMN_INDEX#" onchange="ToggleIsObjectArea(this,#TABLE_INDEX#,#COLUMN_INDEX#);ChangeSelected(this);" value="0"> 
+					<span id="ctnIsObject_#TABLE_INDEX#_#COLUMN_INDEX#" class="HideIsObjectContainer">
+					|
+					Table:
+					<select id="ddlTables_#TABLE_INDEX#_#COLUMN_INDEX#" name="ddlTables_#TABLE_INDEX#_#COLUMN_INDEX#" onchange="FillIsObjectTextAndValue(this);">
+						<option value="0">Loading...</option>
+					</select>
+					Value Field:
+					<select id="ddlValueField_#TABLE_INDEX#_#COLUMN_INDEX#" name="ddlValueField_#TABLE_INDEX#_#COLUMN_INDEX#">
+						<option value="0">Waiting a table...</option>
+					</select> 
+					Text Field:
+					<select id="ddlTextField_#TABLE_INDEX#_#COLUMN_INDEX#" name="ddlTextField_#TABLE_INDEX#_#COLUMN_INDEX#">
+						<option value="0">Waiting a table...</option>
+					</select> 
+					</span>
+				</p>
+			</li>

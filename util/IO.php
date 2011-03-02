@@ -76,17 +76,23 @@ class IO
 	
 	function CreateDirectory($target,$permission)
 	{
-		try
+		if(!self::ExistDir($target))
 		{
-			mkdir($target, $permission, true);
-			return true;
+			try
+			{
+				$oldumask = umask(0);
+				mkdir($target, $permission, true);
+				umask($oldumask);
+				return true;
+			}
+			catch(Exception $err)
+			{
+				self::$has_error = true;
+				self::$error_message = $err;
+				return false;
+			}	
 		}
-		catch(Exception $err)
-		{
-			self::$has_error = true;
-			self::$error_message = $err;
-			return false;
-		}	 
+ 
 	}
 	
 	function DeleteDirectory($target)

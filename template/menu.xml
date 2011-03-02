@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+	<body>
+		<![CDATA[
+<div id="sidebar">
+	<ul class="sideNav">
+		#ITEMS#
+    </ul>
+</div>
+		]]>
+	</body>
+	<item id="menu-item">
+		<![CDATA[
+		<li><a href="../#CLASS_NAME#/list.php">#CLASS_NAME#</a></li>
+		]]>
+	</item>
+</data>

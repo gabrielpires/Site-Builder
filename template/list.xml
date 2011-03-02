@@ -1,119 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class>
+<data>
 	<body>
 		<![CDATA[
-		<?php
-			include_once('../Class/#CLASS_NAME#.php');
-		?>
+<?php 
+	session_start();
+			
+	require_once('../../class/#CLASS_NAME#.php');
+	$result = isset($_SESSION['ADMIN_SERVICE_RESULT']) ? $_SESSION['ADMIN_SERVICE_RESULT'] : null;
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Administravive Panel - Dashboard - #CLASS_NAME# -List</title>
+<?php include_once('../controls/assets.php'); ?>
+</head>
+
+<body>
+	<div id="wrapper">
+   		
+		<!-- mainNav -->
+		<?php include_once('../controls/header.php'); ?>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+                <!--  #sidebar -->
+				<?php include_once('../controls/sidebar.php'); ?>
+				<!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <h2><a href="#">Dashboard</a> &raquo; #CLASS_NAME#  &raquo; <a href="#" class="active">List</a></h2>
+                
+                <div id="main">
+
+					<?php 
+						$list = #CLASS_NAME#::ListAll(); 
+						$hasRegister = (count($list) > 0);
+					?>		
+					<?php if($result != null) : ?>
+					<p class="box-<?php echo $result['response']; ?>"><?php echo $result['result'];?></p>		
+					<?php 
+						endif;
+						unset($_SESSION['ADMIN_SERVICE_RESULT']);
+					?>
+					<?php if($hasRegister) : ?>
+					
+					<h3><a href="form.php">Add new</a></h3>
+
+                    	<table cellpadding="0" cellspacing="0">
+							<tr class="table_header">
+								#HEADER#
+								<td class="action">Commands</td>
+							</tr>
+							<?php 
+								foreach($list as $item) :
+							?>
+							<tr>
+                                #ROWS#
+                            </tr>  
+							<?php 
+								endforeach;
+							?>                   
+                        </table>
+                   	<h3><a href="form.php">Add new</a></h3>
+                   	<?php else : ?>
+                   		<p class="no-register">No register has been found.<br/>To create a new, <a href="form.php">click here.</a></p>
+					<?php endif; ?>
+
+                </div>
+                <!-- // #main -->
+                
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+	<?php include_once('../controls/footer.php'); ?>
 		
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-			<title>Painel Andministrativo</title>
-			<?php include_once('controls/import.ctrl'); ?>
-
-		</head>
-		<body>
-			<?php include_once('controls/header.ctrl'); ?>
-
-			<div class="content">
-				<h1>Lista de #CLASS_NAME#</h1>
-				<div class="list">
-					<form name="list_form" method="post">
-						<ul class="list_bts">
-							<li><a class="new_bt" href="#CLASS_NAME#Details.php" title="Cadastrar um novo item">Novo</a></li>
-						</ul>
-						<?php
-							$action  = $_GET['action'];
-							if($action == 'delete')
-							{
-								$deleted = false;
-								try
-								{
-									$id = $_GET['id'];
-									if($id > 0)
-									{
-										$item = new #CLASS_NAME#();
-										$item->#PRIMARY_CLASS_FIELD# = $id;
-										$item->Delete();
-										$deleted = true;	
-									}
-									else
-									{
-										$deleted = false;
-									}
-	
-								}
-								catch(Exception $err)
-								{
-									
-								}
-
-								
-								if($deleted)
-								{
-									echo('<div class="alertBox success"><p>Item excluido com sucesso.</p></div>');
-								}
-								else
-								{
-									echo('<div class="alertBox error"><p>Não foi possível excluir este item.</p></div>');
-								}
-							}
-
-						?>
-						<?php 
-							$list = #CLASS_NAME#::ListAll();
-							$count = count($list);
-							if($count > 0)
-							{
-								echo("<table>");
-								echo("<tr class='titles'>#HEADER_FIELDS#<td>Edit</td><td>Delete</td></tr>");
-								$counter = 0;
-								foreach ($list as $item)
-								{
-									$line = '';
-									if($counter == 0)
-									{
-										$line = 'even';
-										$counter = 1;
-									}
-									else
-									{
-										$line = 'odd';
-										$counter = 0;
-									}
-									
-									$link  = "javascript:DeleteItem('#CLASS_NAME#List.php?id=$item->id&action=delete');";
-
-									echo("<tr class='$line'>");
-									echo("#LINE_FIELDS#");
-									echo('<td><a href="#CLASS_NAME#Details.php?id=' . $item->#PRIMARY_CLASS_FIELD# . '" class="edit_bt" id="btnEdit" name="btnEdit" title="Editar item ">Editar</a></td>');
-									echo('<td><a href="' . $link . '" class="del_bt" id="btnDelete" name="btnDelete" title="Excluir item ">Delete</a></td>');
-									echo("</tr>");
-
-								}
-								echo("</table>");
-							}
-							else
-							{
-								echo('<div class="alertBox alertBoxSucess"><p>Nenhum registro foi encontrado.</p></div>');
-							}
-						?>
-
-					</form>
-				</div>
-			</div>
-
-			<?php include_once('controls/footer.ctrl'); ?>
-
-		</body>
-		</html>
-
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>
+			
 		]]>
 	</body>
-
-</class>
+	<item id="header-item">
+		<![CDATA[
+			<td>#NAME#</td>
+		]]>
+	</item>
+	<item id="value-item">
+		<![CDATA[
+			<td><?php echo $item->#VALUE# ?></td>
+		]]>
+	</item>		
+	<item id="row-item">
+		<![CDATA[
+			#VALUES#
+			<td class="action"><a href="form.php?id=<?php echo($item->#KEY#); ?>" class="edit">Edit</a><a href="javascript:DeleteItem(<?php echo($item->#KEY#); ?>,'list');" class="delete">Delete</a></td>
+		]]>
+	</item>
+</data>

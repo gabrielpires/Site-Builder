@@ -2,154 +2,199 @@
 <class>
 	<body>
 		<![CDATA[
-			<?php
-				//USING
-				include_once('../Database/Pivot.MySQL.Connection.php');
-				include_once('../Database/Pivot.MySQL.Query.php');
-				include_once('../Database/Pivot.MySQL.Aux.php');
-			?>
-			<?php
-			class #CLASS_NAME#
+<?php
+
+	//USING
+	if(!strpos($_SERVER['REQUEST_URI'], 'admin'))
+	{
+		include_once('../database/factory.php');
+	}
+	else
+	{
+		include_once('../../database/factory.php');
+	}
+
+	class #CLASS_NAME#
+	{
+		//Attributes
+		#FIELDS#
+
+		//Constructor
+		public function #CLASS_NAME#()
+		{
+			$this->ClearAttributes();
+		}
+
+		//Functions
+		public function ClearAttributes()
+		{
+			#CLEAR_FIELDS#
+		}
+		public function FillAttributes($row)
+		{
+			#FILL_FIELDS#
+		}
+
+		public function Load($id)
+		{
+			$result = ConnectionFactory::ExecuteSelect("SELECT * FROM #TABLE_NAME# WHERE #PRIMARY_TABLE_FIELD# = $#PRIMARY_CLASS_FIELD# ");
+
+			if(!$result)
 			{
-				//Attributes
-				#FIELDS#
-
-
-				//Constructor
-				public function #CLASS_NAME#()
+				echo(mysql_error());
+			}
+			else
+			{
+				while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
 				{
-					$this->ClearAttributes();
-				}
-
-				//Functions
-
-				public function ClearAttributes()
-				{
-					#CLEAR_FIELDS#
-				}
-				public function FillAttributes($row)
-				{
-					#FILL_FIELDS#
-				}
-
-				public function Load($id)
-				{
-					$result = ConnectionFactory::ExecuteSelect("SELECT * FROM #TABLE_NAME# WHERE #PRIMARY_TABLE_FIELD# = $#PRIMARY_CLASS_FIELD# ");
-
-					if(!$result)
-					{
-						echo(mysql_error());
-					}
-					else
-					{
-						while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
-						{
-							$this->FillAttributes($row);
-						}
-					}
-				}
-
-
-				public function Save()
-				{
-					try
-					{
-						if($this->#PRIMARY_CLASS_FIELD#  > 0)
-						{
-							return $this->Update();
-						}
-						else
-						{
-							return $this->Insert();
-						}
-					}
-					catch(Exception $err)
-					{
-						echo($err);
-						return false;
-					}
-				}
-
-				public function Insert()
-				{
-					try
-					{
-						$fields = array();
-						#DATABASE_QUERY_FIELDS#
-
-						$this->id = ConnectionFactory::ExecuteInsert(MySQLQuery::Insert('#TABLE_NAME#',$fields));
-						$success = $this->id > 0;
-
-						return ($success);
-					}
-					catch(Exception $err)
-					{
-
-						echo($err);
-						return false;
-					}
-				}
-
-				public function Update()
-				{
-					try
-					{
-
-						$fields = array();
-						#DATABASE_QUERY_FIELDS#
-
-						return (ConnectionFactory::ExecuteAffected(MySQLQuery::Update('#TABLE_NAME#',$fields,MySQLAux::CreateField('#PRIMARY_TABLE_FIELD#',"$this->#PRIMARY_CLASS_FIELD#",'#PRIMARY_CLASS_TYPE#'))) > 0);
-					}
-					catch(Exception $err)
-					{
-
-						echo($err);
-						return false;
-					}
-				}
-				
-				public function Delete()
-				{
-					try
-					{
-						return (ConnectionFactory::ExecuteAffected("DELETE FROM #TABLE_NAME# WHERE #PRIMARY_TABLE_FIELD# = $this->#PRIMARY_CLASS_FIELD#") > 0);
-					}
-					catch(Exception $err)
-					{
-
-						echo($err);
-						return false;
-					}
-				}
-				
-				public function ListAll()
-				{
-					return self::GenericList('SELECT * FROM #TABLE_NAME#');
-				}
-				
-				public function GenericList($pQuery)
-				{
-					$result = ConnectionFactory::ExecuteSelect($pQuery);
-					$list = array();
-					if(!$result)
-					{
-						echo(mysql_error());
-					}
-					else
-					{
-						while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
-						{
-							$item = new #CLASS_NAME#();
-							$item->FillAttributes($row);
-							array_push($list, $item);
-						}
-					}
-					
-					return $list;
+					$this->FillAttributes($row);
 				}
 			}
+		}
 
-			?>
+
+		public function Save()
+		{
+			try
+			{
+				if($this->#PRIMARY_CLASS_FIELD#  > 0)
+				{
+					return $this->Update();
+				}
+				else
+				{
+					return $this->Insert();
+				}
+			}
+			catch(Exception $err)
+			{
+				echo($err);
+				return false;
+			}
+		}
+
+		public function Insert()
+		{
+			try
+			{
+				$fields = array();
+				#DATABASE_QUERY_FIELDS#
+
+				$this->id = ConnectionFactory::ExecuteInsert(MySQLQuery::Insert('#TABLE_NAME#',$fields));
+				$success = $this->id > 0;
+
+				return ($success);
+			}
+			catch(Exception $err)
+			{
+
+				echo($err);
+				return false;
+			}
+		}
+
+		public function Update()
+		{
+			try
+			{
+
+				$fields = array();
+				#DATABASE_QUERY_FIELDS#
+
+				return (ConnectionFactory::ExecuteAffected(MySQLQuery::Update('#TABLE_NAME#',$fields,MySQLAux::CreateField('#PRIMARY_TABLE_FIELD#',"$this->#PRIMARY_CLASS_FIELD#",'#PRIMARY_CLASS_TYPE#'))) > 0);
+			}
+			catch(Exception $err)
+			{
+
+				echo($err);
+				return false;
+			}
+		}
+		
+		public function Delete()
+		{
+			try
+			{
+				return (ConnectionFactory::ExecuteAffected("DELETE FROM #TABLE_NAME# WHERE #PRIMARY_TABLE_FIELD# = $this->#PRIMARY_CLASS_FIELD#") > 0);
+			}
+			catch(Exception $err)
+			{
+
+				echo($err);
+				return false;
+			}
+		}
+		
+		public function ListAll()
+		{
+			return self::GenericList('SELECT * FROM #TABLE_NAME# ORDER BY #PRIMARY_TABLE_FIELD#');
+		}
+		
+		public function GenericList($pQuery)
+		{
+			$result = ConnectionFactory::ExecuteSelect($pQuery);
+			$list = array();
+			if(!$result)
+			{
+				echo(mysql_error());
+			}
+			else
+			{
+				while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
+				{
+					$item = new #CLASS_NAME#();
+					$item->FillAttributes($row);
+					array_push($list, $item);
+				}
+			}
+			
+			return $list;
+		}
+		
+		public function Total()
+		{
+			$total = 0;
+			$result = ConnectionFactory::ExecuteSelect('SELECT COUNT(*) AS TOTAL FROM #TABLE_NAME#');
+			$list = array();
+			if(!$result)
+			{
+				echo(mysql_error());
+			}
+			else
+			{
+				while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
+				{
+					$total = $row['TOTAL'];
+				}
+			}
+			
+			return $total;
+		}
+	}
+
+?>
 		]]>
 	</body>
+	<items>
+		<item id="property">
+			<![CDATA[
+				public $#PROPERTY_NAME#;
+			]]>
+		</item>
+		<item id="query-property">
+			<![CDATA[
+				array_push($fields, MySQLAux::CreateField('#COLUMN_NAME#',"$this->#PROPERTY_NAME#",'#TYPE#'));
+			]]>
+		</item>
+		<item id="fill-property">
+			<![CDATA[		
+				$this->#PROPERTY_NAME# = $row['#COLUMN_NAME#'];
+			]]>
+		</item>
+		<item id="empty-property">
+			<![CDATA[
+				$this->#PROPERTY_NAME# = #EMPTY_VALUE#;
+			]]>
+		</item>	
+	</items>
 </class>

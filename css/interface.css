@@ -1,0 +1,44 @@
+#ctnDatabases
+{
+	display:none;
+}
+
+#ctnProject
+{
+	display:none;
+}
+
+#ctnTables
+{
+	display:none;
+}
+
+
+.HideIsObjectContainer
+{
+	display:none;
+}
+
+.ShowIsObjectContainer
+{
+	
+}
+
+.HideGenerateCRUDButton
+{
+	display:none;
+}
+
+.ShowGenerateCRUDButton
+{
+
+}
+
+.loading
+{
+	text-align: center;
+	margin-top:20px;
+	padding-top:20px;
+	border-top:solid 1px #E6E6E6;
+	display:none;
+}
