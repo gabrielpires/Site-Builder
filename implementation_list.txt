@@ -1,3 +1,0 @@
-- Mecanismo de validação
-- Aplicação do IsObject ja com lista
-- Alteração de campos BIT para checkbox
